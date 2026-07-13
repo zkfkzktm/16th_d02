@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="ko" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SSAFY - 청년 소프트웨어·AI 교육 프로그램</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Font Awesome Icons for polished look -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Pretendard Web Font -->
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+
+  <!-- Tailwind Configuration with custom green pastel palette -->
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            ssafy: {
+              green: '#10B981',       // Base pastel green (Emerald)
+              darkgreen: '#047857',   // Deeper green for high-contrast light mode text
+              accent: '#34D399',      // Light pastel mint accent
+              light: '#F4FAF6',       // Super soft pastel green background
+              deep: '#061C12'         // Dark green-tinted charcoal for dark mode highlights
+            }
+          },
+          fontFamily: {
+            sans: ['Pretendard', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'Roboto', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Script to prevent dark mode flash on page load -->
+  <script>
+    if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  </script>
+
+  <style>
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #F4FAF6;
+    }
+    .dark ::-webkit-scrollbar-track {
+      background: #0f172a;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #a7f3d0;
+      border-radius: 4px;
+    }
+    .dark ::-webkit-scrollbar-thumb {
+      background: #334155;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #10B981;
+    }
+
+    /* Animation Styles for Scroll Reveal */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.8s ease-out;
+    }
+    .reveal.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body class="bg-ssafy-light text-slate-800 dark:bg-slate-950 dark:text-slate-100 font-sans overflow-x-hidden antialiased transition-colors duration-300">
+
+  <!-- Header & Navigation -->
+  <header class="fixed top-0 left-0 w-full bg-white/90 border-slate-200/80 dark:bg-slate-950/90 backdrop-blur-md border-b dark:border-slate-800 z-50 transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+      <!-- Logo -->
+      <a href="#" class="flex items-center space-x-3 group">
+        <div class="w-10 h-10 bg-ssafy-green rounded-lg flex items-center justify-center font-black text-white text-xl tracking-wider shadow-lg shadow-ssafy-green/30 group-hover:rotate-6 transition-transform">
+          S
+        </div>
+        <div class="flex flex-col">
+          <span class="font-extrabold text-slate-950 dark:text-white text-xl tracking-tight leading-none group-hover:text-ssafy-green transition-colors">SSAFY</span>
+          <span class="text-slate-500 dark:text-slate-400 text-[10px] mt-0.5 tracking-wider hidden sm:block">Samsung Software Academy for Youth</span>
+        </div>
+      </a>
+
+      <!-- Desktop Nav Menu -->
+      <nav class="hidden md:flex items-center space-x-8 text-sm font-semibold text-slate-600 dark:text-slate-300">
+        <a href="#about" class="hover:text-ssafy-green dark:hover:text-ssafy-accent transition-colors py-2">소개</a>
+        <a href="#features" class="hover:text-ssafy-green dark:hover:text-ssafy-accent transition-colors py-2">핵심매력</a>
+        <a href="#curriculum" class="hover:text-ssafy-green dark:hover:text-ssafy-accent transition-colors py-2">교육과정</a>
+        <a href="#support-section" class="hover:text-ssafy-green dark:hover:text-ssafy-accent transition-colors py-2">지원포인트</a>
+        <a href="#gallery" class="hover:text-ssafy-green dark:hover:text-ssafy-accent transition-colors py-2">갤러리</a>
+      </nav>
+
+      <!-- Right Actions: Simple Theme Toggle & CTA -->
+      <div class="flex items-center space-x-4">
+        <!-- Sleek minimalist dark mode button -->
+        <button id="theme-toggle" class="p-2.5 rounded-full bg-slate-100 dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800 hover:scale-105 active:scale-95 transition-all focus:outline-none" aria-label="화면 모드 전환">
+          <!-- Moon Icon (Visible in light mode) -->
+          <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z"/></svg>
+          <!-- Sun Icon (Visible in dark mode) -->
+          <svg id="theme-toggle-light-icon" class="hidden w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m0 13.5V21m8.942-8.942h-2.25M4.158 11.25h-2.25m15.54 6.792l-1.591-1.591M6.46 6.46L4.87 4.87M18.36 4.87l-1.591 1.591M6.46 17.54l-1.591-1.591M12 7.5a4.5 4.5 0 110 9 4.5 4.5 0 010-9z"/></svg>
+        </button>
+
+        <!-- CTA Button in Header -->
+        <div class="hidden md:block">
+          <button onclick="scrollToSupport()" class="bg-ssafy-green hover:bg-ssafy-darkgreen text-white font-bold py-2.5 px-5 rounded-full text-sm transition-all shadow-md shadow-ssafy-green/20 hover:shadow-ssafy-green/40 transform hover:-translate-y-0.5 active:translate-y-0">
+            지원 안내 알아보기 <i class="fa-solid fa-arrow-right ml-1"></i>
+          </button>
+        </div>
+
+        <!-- Mobile Hamburger Button -->
+        <button id="mobile-menu-btn" class="md:hidden text-slate-700 dark:text-slate-300 hover:text-ssafy-green p-2 focus:outline-none" aria-label="메뉴 열기">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path id="hamburger-icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Drawer Menu -->
+    <div id="mobile-menu" class="hidden md:hidden bg-white dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 transition-all duration-300">
+      <div class="px-6 py-6 flex flex-col space-y-4">
+        <a href="#about" class="mobile-nav-link text-slate-700 dark:text-slate-300 hover:text-ssafy-green font-medium py-2 border-b border-slate-100 dark:border-slate-800">소개</a>
+        <a href="#features" class="mobile-nav-link text-slate-700 dark:text-slate-300 hover:text-ssafy-green font-medium py-2 border-b border-slate-100 dark:border-slate-800">핵심매력</a>
+        <a href="#curriculum" class="mobile-nav-link text-slate-700 dark:text-slate-300 hover:text-ssafy-green font-medium py-2 border-b border-slate-100 dark:border-slate-800">교육과정</a>
+        <a href="#support-section" class="mobile-nav-link text-slate-700 dark:text-slate-300 hover:text-ssafy-green font-medium py-2 border-b border-slate-100 dark:border-slate-800">지원포인트</a>
+        <a href="#gallery" class="mobile-nav-link text-slate-700 dark:text-slate-300 hover:text-ssafy-green font-medium py-2 border-b border-slate-100 dark:border-slate-800">갤러리</a>
+        <button onclick="scrollToSupport(); toggleMobileMenu();" class="w-full bg-ssafy-green hover:bg-ssafy-darkgreen text-white font-bold py-3 rounded-xl text-center shadow-lg transition-all mt-2">
+          지원 안내 알아보기
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- 1. HERO SECTION -->
+  <section class="relative min-h-screen pt-20 flex items-center bg-gradient-to-b from-ssafy-light via-white to-ssafy-light dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 text-slate-800 dark:text-white overflow-hidden transition-colors duration-300">
+    <!-- Abstract Glowing Gradients background -->
+    <div class="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[350px] sm:w-[500px] h-[350px] sm:h-[500px] rounded-full bg-ssafy-green/10 dark:bg-ssafy-green/20 blur-[80px] sm:blur-[120px] pointer-events-none"></div>
+    <div class="absolute bottom-1/4 right-1/4 translate-x-1/2 translate-y-1/2 w-[300px] sm:w-[450px] h-[300px] sm:h-[450px] rounded-full bg-ssafy-accent/15 dark:bg-emerald-500/10 blur-[80px] sm:blur-[120px] pointer-events-none"></div>
+    
+    <!-- Grid Overlay Pattern -->
+    <div class="absolute inset-0 bg-[linear-gradient(to_right,#10b98108_1px,transparent_1px),linear-gradient(to_bottom,#10b98108_1px,transparent_1px)] bg-[size:32px_32px] pointer-events-none"></div>
+
+    <div class="max-w-7xl mx-auto px-6 py-12 relative z-10 w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+      <!-- Hero Text (Left) -->
+      <div class="lg:col-span-7 flex flex-col space-y-6 text-left">
+        <div class="inline-flex items-center space-x-2 bg-ssafy-green/10 border border-ssafy-green/20 dark:border-ssafy-green/30 text-ssafy-darkgreen dark:text-ssafy-accent px-4 py-1.5 rounded-full text-xs sm:text-sm font-semibold tracking-wide self-start uppercase animate-pulse">
+          <span class="w-2 h-2 rounded-full bg-ssafy-accent"></span>
+          <span>삼성 청년 SW 아카데미 13기 모집 중</span>
+        </div>
+        
+        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-tight sm:leading-none">
+          <span class="text-transparent bg-clip-text bg-gradient-to-r from-ssafy-darkgreen to-ssafy-accent dark:from-emerald-400 dark:to-teal-300">SSAFY</span><br class="hidden sm:inline">
+          청년의 꿈을 현실로
+        </h1>
+        
+        <p class="text-lg sm:text-2xl text-slate-700 dark:text-slate-300 font-medium leading-relaxed max-w-2xl">
+          " 배움에서 성장으로,<br class="block sm:hidden"> 성장에서 준비로 이어지는 SSAFY "
+        </p>
+
+        <p class="text-sm sm:text-base text-slate-500 dark:text-slate-400 leading-relaxed max-w-xl">
+          비전공자부터 전공자까지, 누구나 최고의 SW·AI 인재가 될 수 있도록 삼성의 노하우가 담긴 실무 교육과 압도적인 맞춤형 취업 지원을 제공합니다.
+        </p>
+
+        <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 pt-4">
+          <button onclick="scrollToSupport()" class="group relative bg-ssafy-green hover:bg-ssafy-darkgreen text-white font-extrabold text-base px-8 py-4 rounded-xl transition-all shadow-lg shadow-ssafy-green/30 hover:shadow-ssafy-green/50 hover:scale-[1.03] active:scale-[0.98] duration-200">
+            지금 지원 알아보기 
+            <i class="fa-solid fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
+          </button>
+          <a href="#about" class="bg-white hover:bg-slate-50 dark:bg-slate-900 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-200 font-bold text-base px-8 py-4 rounded-xl transition-all hover:scale-[1.01] active:scale-[0.99] duration-200 text-center">
+            자세히 알아보기
+          </a>
+        </div>
+      </div>
+
+      <!-- Hero Interactive Graphic Area (Right) -->
+      <div class="lg:col-span-5 flex justify-center items-center relative">
+        <div class="w-full max-w-[400px] aspect-square relative bg-white dark:bg-slate-900/60 border border-emerald-100 dark:border-slate-800 rounded-2xl p-6 shadow-xl dark:shadow-2xl flex flex-col justify-between overflow-hidden group transition-colors">
+          <!-- Glassmorphism card elements -->
+          <div class="absolute inset-0 bg-gradient-to-tr from-ssafy-green/5 to-transparent opacity-50"></div>
+          
+          <!-- Top Row: Code Header Mock -->
+          <div class="flex items-center justify-between border-b border-slate-150 dark:border-slate-800 pb-4 relative z-10">
+            <div class="flex space-x-1.5">
+              <span class="w-3 h-3 rounded-full bg-red-400"></span>
+              <span class="w-3 h-3 rounded-full bg-yellow-400"></span>
+              <span class="w-3 h-3 rounded-full bg-green-400"></span>
+            </div>
+            <span class="text-xs text-slate-400 dark:text-slate-500 font-mono">ssafy_future.py</span>
+          </div>
+
+          <!-- Mid Row: CSS / SVG Dynamic Graph representation -->
+          <div class="my-6 relative z-10 flex flex-col justify-center items-center h-48">
+            <!-- Interconnecting circles using CSS & Absolute elements -->
+            <div class="absolute w-24 h-24 rounded-full bg-ssafy-green/10 dark:bg-ssafy-green/20 border border-ssafy-green/40 flex flex-col items-center justify-center animate-pulse z-20">
+              <i class="fa-solid fa-code text-ssafy-darkgreen dark:text-ssafy-accent text-2xl"></i>
+              <span class="text-[10px] font-bold mt-1 text-slate-700 dark:text-slate-300">SW·AI</span>
+            </div>
+            
+            <div class="absolute -top-4 -left-4 w-16 h-16 rounded-full bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/60 flex flex-col items-center justify-center animate-bounce z-10" style="animation-duration: 4s;">
+              <i class="fa-solid fa-users text-ssafy-darkgreen dark:text-emerald-400 text-sm"></i>
+              <span class="text-[8px] mt-0.5 text-slate-600 dark:text-slate-400">Collaboration</span>
+            </div>
+
+            <div class="absolute -bottom-2 -right-4 w-20 h-20 rounded-full bg-teal-50 dark:bg-teal-950/40 border border-teal-200 dark:border-teal-800/60 flex flex-col items-center justify-center animate-bounce z-10" style="animation-duration: 5s;">
+              <i class="fa-solid fa-briefcase text-emerald-600 dark:text-teal-400 text-base"></i>
+              <span class="text-[8px] mt-0.5 text-slate-600 dark:text-slate-300">Career Run</span>
+            </div>
+
+            <!-- Interconnecting dashed lines SVG -->
+            <svg class="absolute w-full h-full inset-0 pointer-events-none" xmlns="http://www.w3.org/2000/svg">
+              <line x1="20%" y1="20%" x2="50%" y2="50%" stroke="#10b981" stroke-width="1.5" stroke-dasharray="4" opacity="0.4" />
+              <line x1="80%" y1="80%" x2="50%" y2="50%" stroke="#10b981" stroke-width="1.5" stroke-dasharray="4" opacity="0.4" />
+              <line x1="20%" y1="20%" x2="80%" y2="80%" stroke="#e2e8f0" class="dark:stroke-slate-800" stroke-width="1" />
+            </svg>
+          </div>
+
+          <!-- Bottom Row: Dynamic Stat Counter -->
+          <div class="border-t border-slate-150 dark:border-slate-800 pt-4 flex justify-between items-center relative z-10">
+            <div>
+              <p class="text-[10px] text-slate-400 dark:text-slate-500 font-semibold uppercase tracking-wider">누적 취업률</p>
+              <p class="text-xl font-black text-slate-800 dark:text-white">85%+</p>
+            </div>
+            <div class="text-right">
+              <p class="text-[10px] text-slate-400 dark:text-slate-500 font-semibold uppercase tracking-wider">총 교육 지원</p>
+              <p class="text-xl font-black text-ssafy-darkgreen dark:text-ssafy-accent">매월 100만원</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Decorative floating cards behind -->
+        <div class="absolute -bottom-6 -left-6 bg-white dark:bg-slate-900 border border-emerald-100 dark:border-slate-800 p-4 rounded-xl shadow-xl hidden md:block w-40 transform -rotate-6 group-hover:rotate-0 transition-all duration-300">
+          <div class="flex items-center space-x-2 text-emerald-600 dark:text-emerald-400 mb-1.5">
+            <i class="fa-solid fa-star text-xs"></i>
+            <span class="text-[10px] font-bold">실무 중심 교육</span>
+          </div>
+          <p class="text-[11px] text-slate-500 dark:text-slate-400">네트워킹과 알고리즘 집중 몰입 환경</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. INTRODUCTION SECTION -->
+  <section id="about" class="py-24 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 relative transition-colors duration-300">
+    <div class="max-w-5xl mx-auto px-6 relative z-10">
+      
+      <div class="text-center max-w-3xl mx-auto mb-16 reveal">
+        <span class="text-ssafy-green dark:text-ssafy-accent font-bold tracking-widest uppercase text-sm block mb-2">ABOUT SSAFY</span>
+        <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight">
+          SSAFY는 어떤 프로그램인가요?
+        </h2>
+        <div class="w-16 h-1 bg-ssafy-green mx-auto mt-4 rounded"></div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-center reveal">
+        <!-- Text intro -->
+        <div class="md:col-span-7 flex flex-col space-y-6">
+          <h3 class="text-xl sm:text-2xl font-bold leading-snug">
+            삼성과 고용노동부가 함께 청년들의 가능성을 키우고, 대한민국의 소프트웨어 생태계를 주도합니다.
+          </h3>
+          <p class="text-slate-600 dark:text-slate-300 leading-relaxed text-sm sm:text-base">
+            SSAFY(삼성 청년 SW 아카데미)는 청년들의 소프트웨어·AI 역량을 주도적으로 끌어올려, 준비된 개발자로서 취업에 완벽하게 적응할 수 있도록 지원하는 고품격 무료 교육 프로그램입니다. 
+          </p>
+          <p class="text-slate-600 dark:text-slate-300 leading-relaxed text-sm sm:text-base">
+            학비 걱정 없이 학업에만 집중할 수 있도록 <strong>매월 100만 원의 교육 지원금</strong>을 무상 지급하며, 삼성의 체계적인 커리큘럼 하에 실무 수준의 압도적인 노하우를 빠르게 수혈받게 됩니다.
+          </p>
+          
+          <!-- Key details list -->
+          <div class="grid grid-cols-2 gap-4 pt-4">
+            <div class="flex items-start space-x-3">
+              <div class="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-950 flex items-center justify-center shrink-0">
+                <i class="fa-solid fa-graduation-cap text-ssafy-green text-sm"></i>
+              </div>
+              <div>
+                <h4 class="font-bold text-sm">전액 무료 교육</h4>
+                <p class="text-slate-500 dark:text-slate-400 text-xs">교육비 및 재료비 무료</p>
+              </div>
+            </div>
+            <div class="flex items-start space-x-3">
+              <div class="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-950 flex items-center justify-center shrink-0">
+                <i class="fa-solid fa-hand-holding-dollar text-ssafy-green text-sm"></i>
+              </div>
+              <div>
+                <h4 class="font-bold text-sm">교육 지원금 지급</h4>
+                <p class="text-slate-500 dark:text-slate-400 text-xs">매월 100만 원 집중 지원</p>
+              </div>
+            </div>
+            <div class="flex items-start space-x-3">
+              <div class="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-950 flex items-center justify-center shrink-0">
+                <i class="fa-solid fa-laptop-code text-ssafy-green text-sm"></i>
+              </div>
+              <div>
+                <h4 class="font-bold text-sm">삼성 SW 역량 검증</h4>
+                <p class="text-slate-500 dark:text-slate-400 text-xs">삼성 모의 검정 기회 제공</p>
+              </div>
+            </div>
+            <div class="flex items-start space-x-3">
+              <div class="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-950 flex items-center justify-center shrink-0">
+                <i class="fa-solid fa-building text-ssafy-green text-sm"></i>
+              </div>
+              <div>
+                <h4 class="font-bold text-sm">대기업 연계 네트워킹</h4>
+                <p class="text-slate-500 dark:text-slate-400 text-xs">다양한 기업 채용 박람회</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Decorative visual (Right) -->
+        <div class="md:col-span-5 bg-emerald-50/50 dark:bg-slate-950 p-8 rounded-2xl border border-emerald-100/50 dark:border-slate-800 flex flex-col space-y-6 relative overflow-hidden">
+          <div class="absolute -top-12 -right-12 w-24 h-24 bg-ssafy-green/5 rounded-full"></div>
+          
+          <div class="flex items-center space-x-3">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+            <span class="text-xs text-emerald-600 dark:text-emerald-400 font-bold tracking-widest uppercase">Target & Eligibility</span>
+          </div>
+          
+          <h4 class="text-lg font-bold">누가 지원할 수 있나요?</h4>
+          
+          <ul class="space-y-3 text-slate-650 dark:text-slate-300 text-sm">
+            <li class="flex items-start">
+              <i class="fa-solid fa-circle-check text-ssafy-green mt-1 mr-2 text-xs"></i>
+              <span>만 29세 이하의 청년 구직자</span>
+            </li>
+            <li class="flex items-start">
+              <i class="fa-solid fa-circle-check text-ssafy-green mt-1 mr-2 text-xs"></i>
+              <span>4년제 대학 졸업자 및 졸업예정자</span>
+            </li>
+            <li class="flex items-start">
+              <i class="fa-solid fa-circle-check text-ssafy-green mt-1 mr-2 text-xs"></i>
+              <span>전공 무관 (인문·이공계 모두 대환영)</span>
+            </li>
+            <li class="flex items-start">
+              <i class="fa-solid fa-circle-check text-ssafy-green mt-1 mr-2 text-xs"></i>
+              <span>현재 미취업 상태인 청년 인재</span>
+            </li>
+          </ul>
+
+          <div class="bg-emerald-50 dark:bg-emerald-950/40 p-4 rounded-xl border border-emerald-100 dark:border-emerald-900/60 text-xs text-ssafy-darkgreen dark:text-ssafy-accent font-medium flex items-center space-x-2">
+            <i class="fa-solid fa-info-circle text-base"></i>
+            <span>전공자와 비전공자 맞춤형 반 분리 배치로 맞춤형 고속 성장이 가능합니다!</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. CORE ATTRACTION POINTS SECTION (배움 / 성장 / 준비) -->
+  <section id="features" class="py-24 bg-ssafy-light dark:bg-slate-950 text-slate-900 dark:text-slate-100 relative transition-colors duration-300">
+    <div class="max-w-7xl mx-auto px-6">
+      
+      <div class="text-center max-w-3xl mx-auto mb-16 reveal">
+        <span class="text-ssafy-green dark:text-ssafy-accent font-bold tracking-widest uppercase text-sm block mb-2">KEY ADVANTAGES</span>
+        <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight">
+          SSAFY만의 핵심 매력 포인트 3가지
+        </h2>
+        <p class="text-slate-500 dark:text-slate-400 mt-3 text-sm sm:text-base">청년의 도전에 필요한 모든 것을 단계별로 촘촘히 담았습니다.</p>
+        <div class="w-16 h-1 bg-ssafy-green mx-auto mt-4 rounded"></div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        
+        <!-- Point 1: 배움 -->
+        <div class="bg-white dark:bg-slate-900 p-8 rounded-2xl shadow-md border border-emerald-100/50 dark:border-slate-800 hover:shadow-xl dark:hover:shadow-black/30 transition-all duration-300 transform hover:-translate-y-2 flex flex-col space-y-4 reveal">
+          <div class="w-14 h-14 bg-emerald-100/60 dark:bg-emerald-950/50 rounded-xl flex items-center justify-center text-ssafy-darkgreen dark:text-ssafy-accent text-2xl font-bold">
+            <i class="fa-solid fa-book-open-reader"></i>
+          </div>
+          <div class="flex items-baseline space-x-2">
+            <span class="text-ssafy-darkgreen dark:text-ssafy-accent font-extrabold text-xs tracking-wider uppercase">POINT 01</span>
+            <span class="text-slate-400 dark:text-slate-600 font-bold text-xs">|</span>
+            <span class="text-slate-800 dark:text-white font-black text-xl">배움</span>
+          </div>
+          <h3 class="text-lg font-bold">기초 개념부터 촘촘하게, 흐름을 놓치지 않는 교육</h3>
+          <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+            처음 컴퓨터 언어를 만져보더라도 낙오하지 않도록 핵심 이론과 기본기를 확실하게 학습합니다. 완벽하게 준비된 전문 강사진의 피드백과 서포터 지원으로 프로그래밍의 튼튼한 뼈대를 쌓습니다.
+          </p>
+        </div>
+
+        <!-- Point 2: 성장 -->
+        <div class="bg-white dark:bg-slate-900 p-8 rounded-2xl shadow-md border border-emerald-100/50 dark:border-slate-800 hover:shadow-xl dark:hover:shadow-black/30 transition-all duration-300 transform hover:-translate-y-2 flex flex-col space-y-4 reveal">
+          <div class="w-14 h-14 bg-emerald-100/60 dark:bg-emerald-950/50 rounded-xl flex items-center justify-center text-ssafy-darkgreen dark:text-ssafy-accent text-2xl font-bold">
+            <i class="fa-solid fa-rocket"></i>
+          </div>
+          <div class="flex items-baseline space-x-2">
+            <span class="text-ssafy-darkgreen dark:text-ssafy-accent font-extrabold text-xs tracking-wider uppercase">POINT 02</span>
+            <span class="text-slate-400 dark:text-slate-600 font-bold text-xs">|</span>
+            <span class="text-slate-800 dark:text-white font-black text-xl">성장</span>
+          </div>
+          <h3 class="text-lg font-bold">실전 기업 프로젝트와 협업을 통한 확실한 성장</h3>
+          <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+            단순히 혼자 작성하는 코드에서 벗어나 실제 현업과 동일한 Agile 방식의 고강도 프로젝트 협업을 진행합니다. 코드 리뷰, 배포, 형상 관리를 거치며 어엿한 주니어 개발자로 거듭나게 됩니다.
+          </p>
+        </div>
+
+        <!-- Point 3: 준비 -->
+        <div class="bg-white dark:bg-slate-900 p-8 rounded-2xl shadow-md border border-emerald-100/50 dark:border-slate-800 hover:shadow-xl dark:hover:shadow-black/30 transition-all duration-300 transform hover:-translate-y-2 flex flex-col space-y-4 reveal">
+          <div class="w-14 h-14 bg-emerald-100/60 dark:bg-emerald-950/50 rounded-xl flex items-center justify-center text-ssafy-darkgreen dark:text-ssafy-accent text-2xl font-bold">
+            <i class="fa-solid fa-briefcase"></i>
+          </div>
+          <div class="flex items-baseline space-x-2">
+            <span class="text-ssafy-darkgreen dark:text-ssafy-accent font-extrabold text-xs tracking-wider uppercase">POINT 03</span>
+            <span class="text-slate-400 dark:text-slate-600 font-bold text-xs">|</span>
+            <span class="text-slate-800 dark:text-white font-black text-xl">준비</span>
+          </div>
+          <h3 class="text-lg font-bold">취업 성공으로 이어지는 촘촘한 밀착형 포트폴리오</h3>
+          <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+            교육 수료 후 전담 취업 컨설턴트와의 면접 코칭, 이력서 첨삭, 삼성 계열사를 비롯한 수백 개의 연계 기업 채용 설명회 등 취업 시장에 가장 매력적인 신입 인재로 다듬어지는 종합 취업 솔루션이 가동됩니다.
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. EDUCATION TIMELINE SECTION (기초 → 적용 → 프로젝트) -->
+  <section id="curriculum" class="py-24 bg-slate-900 text-white relative">
+    <div class="max-w-7xl mx-auto px-6">
+      
+      <div class="text-center max-w-3xl mx-auto mb-20 reveal">
+        <span class="text-ssafy-accent font-bold tracking-widest uppercase text-sm block mb-2">CURRICULUM FLOW</span>
+        <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-white">
+          탄탄하게 연결되는 교육 흐름
+        </h2>
+        <p class="text-slate-400 mt-3 text-sm sm:text-base">1년 간의 몰입 기간 동안 어떻게 교육이 진행되는지 그 로드맵을 확인하세요.</p>
+        <div class="w-16 h-1 bg-ssafy-green mx-auto mt-4 rounded"></div>
+      </div>
+
+      <!-- Timeline Wrapper -->
+      <div class="relative flex flex-col space-y-12 md:space-y-0 md:grid md:grid-cols-3 gap-8 before:absolute before:inset-y-0 before:left-6 md:before:inset-x-0 md:before:top-1/2 md:before:left-0 before:w-1 md:before:w-full before:h-full md:before:h-1 before:bg-emerald-950/60 before:-z-0">
+        
+        <!-- Step 1: 기초 -->
+        <div class="bg-slate-950 border border-slate-850 p-8 rounded-2xl relative z-10 transition-transform duration-300 hover:scale-[1.03] hover:border-ssafy-green/50 reveal">
+          <!-- Step Badge -->
+          <div class="absolute -top-6 left-6 md:left-1/2 md:-translate-x-1/2 w-12 h-12 rounded-full bg-ssafy-green border-4 border-slate-900 flex items-center justify-center font-black text-white text-lg animate-pulse">
+            1
+          </div>
+          <div class="pt-4 text-center">
+            <span class="text-xs font-bold text-ssafy-accent uppercase tracking-widest block mb-1">1학기 (5개월)</span>
+            <h3 class="text-xl font-bold text-white mb-3">기초 몰입 교육</h3>
+            <p class="text-slate-400 text-sm leading-relaxed text-left">
+              알고리즘, 웹 프론트엔드, 백엔드 등 가장 기초가 되는 CS 지식을 정밀하게 수혈받습니다. 체계적인 매일 학습 체계와 단기 과제 풀이로 SW적 사고 능력을 대폭 끌어올립니다.
+            </p>
+            <div class="mt-4 flex flex-wrap gap-2 justify-center">
+              <span class="text-[10px] bg-emerald-950/50 text-slate-300 px-2.5 py-1 rounded">Algorithm</span>
+              <span class="text-[10px] bg-emerald-950/50 text-slate-300 px-2.5 py-1 rounded">Java / Python</span>
+              <span class="text-[10px] bg-emerald-950/50 text-slate-300 px-2.5 py-1 rounded">Web App</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2: 적용 -->
+        <div class="bg-slate-950 border border-slate-850 p-8 rounded-2xl relative z-10 transition-transform duration-300 hover:scale-[1.03] hover:border-emerald-500/50 reveal" style="transition-delay: 100ms;">
+          <!-- Step Badge -->
+          <div class="absolute -top-6 left-6 md:left-1/2 md:-translate-x-1/2 w-12 h-12 rounded-full bg-emerald-500 border-4 border-slate-900 flex items-center justify-center font-black text-white text-lg">
+            2
+          </div>
+          <div class="pt-4 text-center">
+            <span class="text-xs font-bold text-emerald-400 uppercase tracking-widest block mb-1">1학기 집중 기간</span>
+            <h3 class="text-xl font-bold text-white mb-3">관통 관문 프로젝트</h3>
+            <p class="text-slate-400 text-sm leading-relaxed text-left">
+              1학기 동안 배웠던 프론트엔드 및 백엔드 지식을 종합하여 하나의 온전한 플랫폼을 완성하는 프로젝트에 돌입합니다. 전체 기술 스택을 설계하고 동작을 증명하는 첫 과정입니다.
+            </p>
+            <div class="mt-4 flex flex-wrap gap-2 justify-center">
+              <span class="text-[10px] bg-emerald-950/50 text-slate-300 px-2.5 py-1 rounded">REST API</span>
+              <span class="text-[10px] bg-emerald-950/50 text-slate-300 px-2.5 py-1 rounded">Database</span>
+              <span class="text-[10px] bg-emerald-950/50 text-slate-300 px-2.5 py-1 rounded">End-to-End</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3: 프로젝트 -->
+        <div class="bg-slate-950 border border-slate-850 p-8 rounded-2xl relative z-10 transition-transform duration-300 hover:scale-[1.03] hover:border-teal-500/50 reveal" style="transition-delay: 200ms;">
+          <!-- Step Badge -->
+          <div class="absolute -top-6 left-6 md:left-1/2 md:-translate-x-1/2 w-12 h-12 rounded-full bg-teal-550 border-4 border-slate-900 flex items-center justify-center font-black text-white text-lg">
+            3
+          </div>
+          <div class="pt-4 text-center">
+            <span class="text-xs font-bold text-teal-450 uppercase tracking-widest block mb-1">2학기 (5개월)</span>
+            <h3 class="text-xl font-bold text-white mb-3">심화 실전 프로젝트</h3>
+            <p class="text-slate-400 text-sm leading-relaxed text-left">
+              기업들의 최신 실전 메인스트림 분야인 AI, 빅데이터, 클라우드, IoT 등의 대형 과제를 선택하여 기수 동료들과 밀도 높은 팀 협업으로 포트폴리오의 정점을 찍습니다.
+            </p>
+            <div class="mt-4 flex flex-wrap gap-2 justify-center">
+              <span class="text-[10px] bg-emerald-950/50 text-slate-300 px-2.5 py-1 rounded">AI & Big Data</span>
+              <span class="text-[10px] bg-emerald-950/50 text-slate-300 px-2.5 py-1 rounded">DevOps</span>
+              <span class="text-[10px] bg-emerald-950/50 text-slate-300 px-2.5 py-1 rounded">Agile Scrum</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. SUPPORT/BENEFITS SECTION (4 Cards - 학습, 적용, 협업, 진로) -->
+  <section id="support-section" class="py-24 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 relative scroll-mt-20 transition-colors duration-300">
+    <div class="max-w-7xl mx-auto px-6">
+      
+      <div class="text-center max-w-3xl mx-auto mb-16 reveal">
+        <span class="text-ssafy-green dark:text-ssafy-accent font-bold tracking-widest uppercase text-sm block mb-2">4 SUPPORT PILLARS</span>
+        <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight">
+          완전한 집중을 보장하는 4대 혜택
+        </h2>
+        <p class="text-slate-500 dark:text-slate-400 mt-3 text-sm sm:text-base">오직 개발자로서의 성장에만 집중하도록 든든한 날개를 달아 드립니다.</p>
+        <div class="w-16 h-1 bg-ssafy-green mx-auto mt-4 rounded"></div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        
+        <!-- Card 1: 학습 -->
+        <div class="group bg-emerald-50/20 dark:bg-slate-950 border border-emerald-100/50 dark:border-slate-800 p-6 rounded-2xl shadow-sm transition-all hover:bg-emerald-950 dark:hover:bg-emerald-950 hover:text-white dark:hover:text-white hover:shadow-xl hover:shadow-emerald-900/15 dark:hover:shadow-black/50 duration-300 reveal">
+          <div class="w-12 h-12 rounded-xl bg-emerald-100 dark:bg-emerald-900/40 text-ssafy-darkgreen dark:text-emerald-400 flex items-center justify-center text-xl font-bold mb-6 group-hover:bg-ssafy-green group-hover:text-white transition-colors duration-300">
+            <i class="fa-solid fa-graduation-cap"></i>
+          </div>
+          <h3 class="text-lg font-bold mb-3">01. 몰입형 학습 환경</h3>
+          <p class="text-slate-500 dark:text-slate-400 group-hover:text-emerald-100 dark:group-hover:text-emerald-100 text-sm leading-relaxed">
+            전담 퍼실리테이터와 전문 교수진이 상주하여, 상시 질의응답 및 밀착형 코드 리뷰를 통해 비전공자도 탄탄히 정착하도록 독려합니다.
+          </p>
+        </div>
+
+        <!-- Card 2: 적용 -->
+        <div class="group bg-emerald-50/20 dark:bg-slate-950 border border-emerald-100/50 dark:border-slate-800 p-6 rounded-2xl shadow-sm transition-all hover:bg-emerald-950 dark:hover:bg-emerald-950 hover:text-white dark:hover:text-white hover:shadow-xl hover:shadow-emerald-900/15 dark:hover:shadow-black/50 duration-300 reveal" style="transition-delay: 50ms;">
+          <div class="w-12 h-12 rounded-xl bg-emerald-100 dark:bg-emerald-900/40 text-ssafy-darkgreen dark:text-emerald-400 flex items-center justify-center text-xl font-bold mb-6 group-hover:bg-ssafy-green group-hover:text-white transition-colors duration-300">
+            <i class="fa-solid fa-award"></i>
+          </div>
+          <h3 class="text-lg font-bold mb-3">02. 실전에 즉시 대응</h3>
+          <p class="text-slate-500 dark:text-slate-400 group-hover:text-emerald-100 dark:group-hover:text-emerald-100 text-sm leading-relaxed">
+            삼성만의 최고급 SW 역량 검정인 (SW Test) 응시 혜택이 상시 주어지며, 실제 기업 코딩 테스트 통과를 보장할 수준의 트레이닝이 제공됩니다.
+          </p>
+        </div>
+
+        <!-- Card 3: 협업 -->
+        <div class="group bg-emerald-50/20 dark:bg-slate-950 border border-emerald-100/50 dark:border-slate-800 p-6 rounded-2xl shadow-sm transition-all hover:bg-emerald-950 dark:hover:bg-emerald-950 hover:text-white dark:hover:text-white hover:shadow-xl hover:shadow-emerald-900/15 dark:hover:shadow-black/50 duration-300 reveal" style="transition-delay: 100ms;">
+          <div class="w-12 h-12 rounded-xl bg-emerald-100 dark:bg-emerald-900/40 text-ssafy-darkgreen dark:text-emerald-400 flex items-center justify-center text-xl font-bold mb-6 group-hover:bg-ssafy-green group-hover:text-white transition-colors duration-300">
+            <i class="fa-solid fa-people-group"></i>
+          </div>
+          <h3 class="text-lg font-bold mb-3">03. 대규모 연계 협업</h3>
+          <p class="text-slate-500 dark:text-slate-400 group-hover:text-emerald-100 dark:group-hover:text-emerald-100 text-sm leading-relaxed">
+            비전공자와 전공자가 하나 되어 팀을 이루어, 현실 비즈니스에서 발생할 수 있는 대외 이슈를 극복하는 과정에서 팀워크 역량을 다듬습니다.
+          </p>
+        </div>
+
+        <!-- Card 4: 진로 -->
+        <div class="group bg-emerald-50/20 dark:bg-slate-950 border border-emerald-100/50 dark:border-slate-800 p-6 rounded-2xl shadow-sm transition-all hover:bg-emerald-950 dark:hover:bg-emerald-950 hover:text-white dark:hover:text-white hover:shadow-xl hover:shadow-emerald-900/15 dark:hover:shadow-black/50 duration-300 reveal" style="transition-delay: 150ms;">
+          <div class="w-12 h-12 rounded-xl bg-emerald-100 dark:bg-emerald-900/40 text-ssafy-darkgreen dark:text-emerald-400 flex items-center justify-center text-xl font-bold mb-6 group-hover:bg-ssafy-green group-hover:text-white transition-colors duration-300">
+            <i class="fa-solid fa-address-card"></i>
+          </div>
+          <h3 class="text-lg font-bold mb-3">04. 맞춤 일대일 진로</h3>
+          <p class="text-slate-500 dark:text-slate-400 group-hover:text-emerald-100 dark:group-hover:text-emerald-100 text-sm leading-relaxed">
+            전담 취업 지원관이 이력서 자소서 완성부터 실제 기업 매칭 채용관 추천까지 책임지며, 수많은 선배 아카데미 졸업생들과의 멘토링까지 완벽히 연결됩니다.
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. GALLERY SECTION (6 Images Grid) -->
+  <section id="gallery" class="py-24 bg-ssafy-light dark:bg-slate-950 text-slate-900 dark:text-slate-100 relative transition-colors duration-300">
+    <div class="max-w-7xl mx-auto px-6">
+      
+      <div class="text-center max-w-3xl mx-auto mb-16 reveal">
+        <span class="text-ssafy-green dark:text-ssafy-accent font-bold tracking-widest uppercase text-sm block mb-2">CAMPUS LIFE GALLERY</span>
+        <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight">
+          사진으로 미리 만나는 SSAFY 생활
+        </h2>
+        <p class="text-slate-500 dark:text-slate-400 mt-3 text-sm sm:text-base">뜨거운 도전과 협업의 에너지가 넘쳐나는 캠퍼스 현장입니다.</p>
+        <div class="w-16 h-1 bg-ssafy-green mx-auto mt-4 rounded"></div>
+      </div>
+
+      <!-- Gallery Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 reveal">
+        
+        <!-- Image Card 1 -->
+        <div class="group relative overflow-hidden rounded-2xl shadow-md bg-white dark:bg-slate-900 border border-emerald-100/50 dark:border-slate-800 cursor-pointer" onclick="openGalleryModal('교육 현장', '전문 교수진과 함께 코드의 구조를 학습하고, 다양한 트러블 슈팅을 탐구하는 역동적인 강의실 현장입니다.', 'education')">
+          <div class="aspect-[4/3] flex items-center justify-center relative overflow-hidden bg-slate-900">
+            <div class="absolute inset-0 bg-slate-950 flex flex-col items-center justify-center transition-transform duration-500 group-hover:scale-105">
+              <i class="fa-solid fa-laptop-code text-5xl text-ssafy-green/30 mb-3 group-hover:text-ssafy-green transition-colors"></i>
+              <span class="text-slate-600 text-xs font-bold tracking-wider">SSAFY LIFE PLACEHOLDER</span>
+            </div>
+            <!-- Interactive badge overlay -->
+            <div class="absolute bottom-4 left-4 bg-slate-950/80 backdrop-blur-md px-3 py-1 rounded-md border border-slate-800 text-[10px] text-white font-bold tracking-wider uppercase">
+              Classroom Tech
+            </div>
+          </div>
+          <div class="p-6">
+            <h4 class="font-extrabold text-slate-900 dark:text-white text-base mb-1 group-hover:text-ssafy-green dark:group-hover:text-ssafy-accent transition-colors">밀착형 코딩 집중 교육 강의</h4>
+            <p class="text-slate-500 dark:text-slate-400 text-xs line-clamp-2">실무 경험이 풍부한 최고 수준의 멘토가 학생들과 함께 실시간 강의를 펼치고 의견을 공유하는 모습입니다.</p>
+          </div>
+        </div>
+
+        <!-- Image Card 2 -->
+        <div class="group relative overflow-hidden rounded-2xl shadow-md bg-white dark:bg-slate-900 border border-emerald-100/50 dark:border-slate-800 cursor-pointer" onclick="openGalleryModal('해커톤 & 프로젝트 협업', '기획, 개발, 디자인 단계를 한 팀이 되어 완수하는 고강도 집중 스프린트 현장입니다.', 'hackathon')">
+          <div class="aspect-[4/3] flex items-center justify-center relative overflow-hidden bg-slate-900">
+            <div class="absolute inset-0 bg-slate-950 flex flex-col items-center justify-center transition-transform duration-500 group-hover:scale-105">
+              <i class="fa-solid fa-users-viewfinder text-5xl text-emerald-500/30 mb-3 group-hover:text-ssafy-accent transition-colors"></i>
+              <span class="text-slate-600 text-xs font-bold tracking-wider">SSAFY LIFE PLACEHOLDER</span>
+            </div>
+            <div class="absolute bottom-4 left-4 bg-slate-950/80 backdrop-blur-md px-3 py-1 rounded-md border border-slate-800 text-[10px] text-white font-bold tracking-wider uppercase">
+              Project Hackathon
+            </div>
+          </div>
+          <div class="p-6">
+            <h4 class="font-extrabold text-slate-900 dark:text-white text-base mb-1 group-hover:text-ssafy-green dark:group-hover:text-ssafy-accent transition-colors">실시간 연계 연합 해커톤</h4>
+            <p class="text-slate-500 dark:text-slate-400 text-xs line-clamp-2">자신들이 설계한 혁신 아이디어를 직접 제품으로 빚어내고 경쟁하는 뜨거운 협업 축제의 현장입니다.</p>
+          </div>
+        </div>
+
+        <!-- Image Card 3 -->
+        <div class="group relative overflow-hidden rounded-2xl shadow-md bg-white dark:bg-slate-900 border border-emerald-100/50 dark:border-slate-800 cursor-pointer" onclick="openGalleryModal('대규모 채용 박람회', 'SSAFY 전용 맞춤 기업 박람회에서 즉시 면접과 매칭 기회를 선사하는 취업의 문입니다.', 'career')">
+          <div class="aspect-[4/3] flex items-center justify-center relative overflow-hidden bg-slate-900">
+            <div class="absolute inset-0 bg-slate-950 flex flex-col items-center justify-center transition-transform duration-500 group-hover:scale-105">
+              <i class="fa-solid fa-briefcase text-5xl text-teal-500/30 mb-3 group-hover:text-teal-400 transition-colors"></i>
+              <span class="text-slate-600 text-xs font-bold tracking-wider">SSAFY LIFE PLACEHOLDER</span>
+            </div>
+            <div class="absolute bottom-4 left-4 bg-slate-950/80 backdrop-blur-md px-3 py-1 rounded-md border border-slate-800 text-[10px] text-white font-bold tracking-wider uppercase">
+              Job Fair Match
+            </div>
+          </div>
+          <div class="p-6">
+            <h4 class="font-extrabold text-slate-900 dark:text-white text-base mb-1 group-hover:text-ssafy-green dark:group-hover:text-ssafy-accent transition-colors">맞춤식 일대일 기업 박람회</h4>
+            <p class="text-slate-500 dark:text-slate-400 text-xs line-clamp-2">아카데미 수료 예정자를 즉각 채용하고자 방문하는 다양한 유망 IT 기업들과의 즉각적인 교류 및 채용 부스입니다.</p>
+          </div>
+        </div>
+
+        <!-- Image Card 4 -->
+        <div class="group relative overflow-hidden rounded-2xl shadow-md bg-white dark:bg-slate-900 border border-emerald-100/50 dark:border-slate-800 cursor-pointer" onclick="openGalleryModal('모의 면접관 프로그램', '전담 취업 컨설턴트 및 삼성 출신 면접관과 밀착으로 완수하는 실전 모의 면접 과정입니다.', 'interview')">
+          <div class="aspect-[4/3] flex items-center justify-center relative overflow-hidden bg-slate-900">
+            <div class="absolute inset-0 bg-slate-950 flex flex-col items-center justify-center transition-transform duration-500 group-hover:scale-105">
+              <i class="fa-solid fa-user-tie text-5xl text-emerald-500/30 mb-3 group-hover:text-emerald-400 transition-colors"></i>
+              <span class="text-slate-600 text-xs font-bold tracking-wider">SSAFY LIFE PLACEHOLDER</span>
+            </div>
+            <div class="absolute bottom-4 left-4 bg-slate-950/80 backdrop-blur-md px-3 py-1 rounded-md border border-slate-800 text-[10px] text-white font-bold tracking-wider uppercase">
+              Intense Interview
+            </div>
+          </div>
+          <div class="p-6">
+            <h4 class="font-extrabold text-slate-900 dark:text-white text-base mb-1 group-hover:text-ssafy-green dark:group-hover:text-ssafy-accent transition-colors">전담 코치와의 실전 모의 피드백</h4>
+            <p class="text-slate-500 dark:text-slate-400 text-xs line-clamp-2">자신 없는 태도를 버리고 당당한 엔지니어 정체성을 뿜어낼 수 있도록 고강도 이력 분석과 시뮬레이션을 수행합니다.</p>
+          </div>
+        </div>
+
+        <!-- Image Card 5 -->
+        <div class="group relative overflow-hidden rounded-2xl shadow-md bg-white dark:bg-slate-900 border border-emerald-100/50 dark:border-slate-800 cursor-pointer" onclick="openGalleryModal('협업 스터디 룸', '교육 시간 전후로 자율적 몰입을 꾀하는 팀 전용 코워킹 전용 공간입니다.', 'study')">
+          <div class="aspect-[4/3] flex items-center justify-center relative overflow-hidden bg-slate-900">
+            <div class="absolute inset-0 bg-slate-950 flex flex-col items-center justify-center transition-transform duration-500 group-hover:scale-105">
+              <i class="fa-solid fa-door-open text-5xl text-emerald-500/30 mb-3 group-hover:text-emerald-400 transition-colors"></i>
+              <span class="text-slate-600 text-xs font-bold tracking-wider">SSAFY LIFE PLACEHOLDER</span>
+            </div>
+            <div class="absolute bottom-4 left-4 bg-slate-950/80 backdrop-blur-md px-3 py-1 rounded-md border border-slate-800 text-[10px] text-white font-bold tracking-wider uppercase">
+              Co-working Space
+            </div>
+          </div>
+          <div class="p-6">
+            <h4 class="font-extrabold text-slate-900 dark:text-white text-base mb-1 group-hover:text-ssafy-green dark:group-hover:text-ssafy-accent transition-colors">24시간 열린 자율 협업 공간</h4>
+            <p class="text-slate-500 dark:text-slate-400 text-xs line-clamp-2">누구의 제재도 없이 코딩과 알고리즘 풀이, 아이디어 브레인스토밍에 자율적으로 열을 올리는 완벽한 공유 캠퍼스 공간입니다.</p>
+          </div>
+        </div>
+
+        <!-- Image Card 6 -->
+        <div class="group relative overflow-hidden rounded-2xl shadow-md bg-white dark:bg-slate-900 border border-emerald-100/50 dark:border-slate-800 cursor-pointer" onclick="openGalleryModal('삼성 캠퍼스 수료식', '1년 동안 모든 역경을 견디고 빛나는 수료장과 함께 당당한 입사 여정을 시작하는 날입니다.', 'graduation')">
+          <div class="aspect-[4/3] flex items-center justify-center relative overflow-hidden bg-slate-900">
+            <div class="absolute inset-0 bg-slate-950 flex flex-col items-center justify-center transition-transform duration-500 group-hover:scale-105">
+              <i class="fa-solid fa-graduation-cap text-5xl text-emerald-550/30 mb-3 group-hover:text-emerald-500 transition-colors"></i>
+              <span class="text-slate-600 text-xs font-bold tracking-wider">SSAFY LIFE PLACEHOLDER</span>
+            </div>
+            <div class="absolute bottom-4 left-4 bg-slate-950/80 backdrop-blur-md px-3 py-1 rounded-md border border-slate-800 text-[10px] text-white font-bold tracking-wider uppercase">
+              The Grand Finale
+            </div>
+          </div>
+          <div class="p-6">
+            <h4 class="font-extrabold text-slate-900 dark:text-white text-base mb-1 group-hover:text-ssafy-green dark:group-hover:text-ssafy-accent transition-colors">영광스러운 최종 수료 대제전</h4>
+            <p class="text-slate-500 dark:text-slate-400 text-xs line-clamp-2">가장 친한 팀 동료, 든든한 강사진과의 아쉬움을 나누고 새로운 기업 입사를 다짐하는 성황리 수료 기념식의 순간입니다.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. CTA (Call To Action) SECTION -->
+  <section class="py-24 bg-gradient-to-b from-emerald-900 to-emerald-950 text-white dark:from-slate-950 dark:to-slate-900 relative overflow-hidden transition-colors duration-300">
+    <!-- Glowing Accent behind CTA -->
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] sm:w-[500px] h-[300px] sm:h-[500px] rounded-full bg-ssafy-green/35 blur-[100px] pointer-events-none"></div>
+
+    <div class="max-w-4xl mx-auto px-6 text-center relative z-10 flex flex-col items-center space-y-8 reveal">
+      <span class="text-ssafy-accent font-bold tracking-widest uppercase text-sm block">JOIN SSAFY TODAY</span>
+      
+      <h2 class="text-3xl sm:text-5xl font-black tracking-tight leading-tight">
+        새로운 소프트웨어 중심지에서<br class="hidden sm:inline">
+        당신의 세상을 직접 프로그래밍 하세요!
+      </h2>
+      
+      <p class="text-slate-300 text-sm sm:text-base max-w-2xl leading-relaxed">
+        망설임은 가입을 늦출 뿐입니다. 최고의 교육 인프라, 전폭적인 금전 지원, 그리고 든든한 동료들과의 만남이 당신을 완벽히 준비된 가치 있는 인재로 성장시킵니다.
+      </p>
+
+      <!-- Sleek Dynamic CTA Button -->
+      <div class="relative group pt-4">
+        <!-- Pulse ring decoration -->
+        <div class="absolute -inset-1 rounded-xl bg-gradient-to-r from-ssafy-green to-emerald-400 opacity-70 blur-md group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-pulse"></div>
+        
+        <button onclick="scrollToSupport()" class="relative bg-ssafy-green hover:bg-emerald-500 dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white font-extrabold text-lg sm:text-xl px-12 py-5 rounded-xl transition-all duration-300 transform hover:scale-[1.08] active:scale-[0.97] flex items-center space-x-3 shadow-2xl">
+          <span>지원 안내 더 알아보기</span>
+          <i class="fa-solid fa-arrow-down-long animate-bounce text-base"></i>
+        </button>
+      </div>
+
+      <div class="flex items-center space-x-6 pt-4 text-xs text-slate-300">
+        <span><i class="fa-solid fa-check text-ssafy-accent mr-1.5"></i>교육비 전액 국비 지원</span>
+        <span><i class="fa-solid fa-check text-ssafy-accent mr-1.5"></i>매월 100만 원 보장</span>
+        <span><i class="fa-solid fa-check text-ssafy-accent mr-1.5"></i>삼성 취업 특전 기회</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8. FOOTER SECTION -->
+  <footer class="bg-emerald-950 text-emerald-200/80 dark:bg-slate-950 dark:text-slate-400 border-t border-emerald-900 dark:border-slate-900 py-16 relative transition-colors duration-300">
+    <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-12 gap-10 items-start">
+      
+      <!-- Footer Info -->
+      <div class="md:col-span-5 flex flex-col space-y-4">
+        <div class="flex items-center space-x-3">
+          <div class="w-8 h-8 bg-ssafy-green rounded-lg flex items-center justify-center font-bold text-white text-base">
+            S
+          </div>
+          <span class="font-extrabold text-white text-lg tracking-tight">SSAFY</span>
+        </div>
+        <p class="text-xs text-emerald-200/60 dark:text-slate-500 leading-relaxed max-w-sm">
+          삼성 청년 SW 아카데미(SSAFY)는 대한민국의 혁신적인 IT 생태계를 주도하고 청년들의 성공적인 구직 환경을 마련하기 위해 설립된 최고의 사회 공헌 프로그램입니다.
+        </p>
+        <span class="text-xs text-emerald-200/40 dark:text-slate-650">© 2026 SSAFY. All Rights Reserved.</span>
+      </div>
+
+      <!-- Quick links -->
+      <div class="md:col-span-3 flex flex-col space-y-3">
+        <h4 class="text-white text-sm font-extrabold uppercase tracking-widest">바로가기</h4>
+        <nav class="flex flex-col space-y-2 text-xs">
+          <a href="#about" class="hover:text-white transition-colors">SSAFY 프로그램 소개</a>
+          <a href="#features" class="hover:text-white transition-colors">핵심 매력 포인트</a>
+          <a href="#curriculum" class="hover:text-white transition-colors">1년 세부 교육 로드맵</a>
+          <a href="#support-section" class="hover:text-white transition-colors">취업 집중 혜택 정보</a>
+          <a href="#gallery" class="hover:text-white transition-colors">캠퍼스 라이프 갤러리</a>
+        </nav>
+      </div>
+
+      <!-- Official Links and Contact -->
+      <div class="md:col-span-4 flex flex-col space-y-4">
+        <h4 class="text-white text-sm font-extrabold uppercase tracking-widest">공식 사이트 및 문의</h4>
+        <div class="flex flex-col space-y-2 text-xs">
+          <a href="https://www.ssafy.com" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-2 text-slate-200 dark:text-slate-300 hover:text-ssafy-accent transition-colors">
+            <i class="fa-solid fa-globe text-base"></i>
+            <span>SSAFY 공식 웹사이트 바로가기</span>
+          </a>
+          <div class="flex items-center space-x-2">
+            <i class="fa-solid fa-envelope text-emerald-300 dark:text-slate-500"></i>
+            <span>공식 이메일: ssafy.contact@samsung.com</span>
+          </div>
+          <div class="flex items-center space-x-2">
+            <i class="fa-solid fa-phone text-emerald-300 dark:text-slate-500"></i>
+            <span>교육 문의: 1544-3322 (평일 09:00 - 18:00)</span>
+          </div>
+        </div>
+
+        <!-- Social Icons -->
+        <div class="flex space-x-3 pt-2">
+          <a href="#" class="w-8 h-8 rounded-full bg-emerald-900/50 dark:bg-slate-900 border border-emerald-800 dark:border-slate-800 flex items-center justify-center text-emerald-100 dark:text-slate-400 hover:bg-ssafy-green hover:text-white transition-all" aria-label="YouTube">
+            <i class="fa-brands fa-youtube text-sm"></i>
+          </a>
+          <a href="#" class="w-8 h-8 rounded-full bg-emerald-900/50 dark:bg-slate-900 border border-emerald-800 dark:border-slate-800 flex items-center justify-center text-emerald-100 dark:text-slate-400 hover:bg-ssafy-green hover:text-white transition-all" aria-label="Instagram">
+            <i class="fa-brands fa-instagram text-sm"></i>
+          </a>
+          <a href="#" class="w-8 h-8 rounded-full bg-emerald-900/50 dark:bg-slate-900 border border-emerald-800 dark:border-slate-800 flex items-center justify-center text-emerald-100 dark:text-slate-400 hover:bg-ssafy-green hover:text-white transition-all" aria-label="Blog">
+            <i class="fa-solid fa-blog text-sm"></i>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- GALLERY DETAIL POPUP MODAL -->
+  <div id="gallery-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 transition-opacity duration-300 opacity-0">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl border border-emerald-100 dark:border-slate-800 transform scale-95 transition-transform duration-300">
+      
+      <!-- Modal Header Banner (Themed according to category) -->
+      <div id="modal-banner" class="h-44 flex flex-col items-center justify-center relative text-white">
+        <!-- Close Button inside banner -->
+        <button onclick="closeGalleryModal()" class="absolute top-4 right-4 bg-black/40 hover:bg-black/60 w-8 h-8 rounded-full flex items-center justify-center text-white text-base focus:outline-none transition-colors" aria-label="닫기">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+        <!-- Dynamic icon based on selection -->
+        <div id="modal-icon-wrap" class="w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-3xl mb-2">
+          <i id="modal-icon" class="fa-solid fa-laptop-code"></i>
+        </div>
+        <span class="text-[10px] font-black uppercase tracking-wider bg-white/30 px-3 py-0.5 rounded-full">SSAFY Life Experience</span>
+      </div>
+
+      <!-- Modal Content Body -->
+      <div class="p-8">
+        <h3 id="modal-title" class="text-2xl font-black text-slate-900 dark:text-white mb-3">교육 강의 모의 현장</h3>
+        <p id="modal-description" class="text-slate-650 dark:text-slate-300 text-sm leading-relaxed mb-6">
+          SSAFY에서는 삼성 소속 전문 강사진들의 상세한 트러블슈팅 세션을 정기적으로 제공합니다.
+        </p>
+
+        <!-- Button to close modal -->
+        <div class="flex justify-end">
+          <button onclick="closeGalleryModal()" class="bg-slate-900 dark:bg-slate-950 hover:bg-slate-800 dark:hover:bg-slate-800 text-white font-extrabold text-sm px-6 py-3 rounded-xl transition-all">
+            확인 및 닫기
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Smooth JavaScript Logic for Interactive UI Elements -->
+  <script>
+    // Theme Toggle Handler
+    const themeToggleBtn = document.getElementById('theme-toggle');
+    const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+    const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+
+    // Display correct icon initially
+    if (document.documentElement.classList.contains('dark')) {
+      themeToggleLightIcon.classList.remove('hidden');
+    } else {
+      themeToggleDarkIcon.classList.remove('hidden');
+    }
+
+    themeToggleBtn.addEventListener('click', function() {
+      themeToggleLightIcon.classList.toggle('hidden');
+      themeToggleDarkIcon.classList.toggle('hidden');
+
+      if (localStorage.getItem('color-theme')) {
+        if (localStorage.getItem('color-theme') === 'light') {
+          document.documentElement.classList.add('dark');
+          localStorage.setItem('color-theme', 'dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+          localStorage.setItem('color-theme', 'light');
+        }
+      } else {
+        if (document.documentElement.classList.contains('dark')) {
+          document.documentElement.classList.remove('dark');
+          localStorage.setItem('color-theme', 'light');
+        } else {
+          document.documentElement.classList.add('dark');
+          localStorage.setItem('color-theme', 'dark');
+        }
+      }
+    });
+
+    // Smooth Scroll to Section 5 (Support/Benefits Section)
+    function scrollToSupport() {
+      const target = document.getElementById('support-section');
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+
+    // Toggle Mobile Hamburg Navigation Menu
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const hamburgerIcon = document.getElementById('hamburger-icon');
+
+    function toggleMobileMenu() {
+      const isHidden = mobileMenu.classList.contains('hidden');
+      if (isHidden) {
+        mobileMenu.classList.remove('hidden');
+        hamburgerIcon.setAttribute('d', 'M6 18L18 6M6 6l12 12'); // Change to 'X' icon
+      } else {
+        mobileMenu.classList.add('hidden');
+        hamburgerIcon.setAttribute('d', 'M4 6h16M4 12h16M4 18h16'); // Change back to hamburger icon
+      }
+    }
+
+    mobileMenuBtn.addEventListener('click', toggleMobileMenu);
+
+    // Close mobile menu on clicking any navigation link
+    document.querySelectorAll('.mobile-nav-link').forEach(link => {
+      link.addEventListener('click', () => {
+        mobileMenu.classList.add('hidden');
+        hamburgerIcon.setAttribute('d', 'M4 6h16M4 12h16M4 18h16');
+      });
+    });
+
+    // Custom Scroll Reveal Animation (Intersection Observer)
+    const revealElements = document.querySelectorAll('.reveal');
+    const revealObserver = new IntersectionObserver((entries, observer) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('active');
+          observer.unobserve(entry.target); // Trigger only once
+        }
+      });
+    }, {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px' // Trigger slightly before element enters view
+    });
+
+    revealElements.forEach(el => {
+      revealObserver.observe(el);
+    });
+
+    // Header Shrink Animation on Scroll
+    const header = document.querySelector('header');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 50) {
+        header.classList.remove('h-20');
+        header.classList.add('h-16', 'shadow-lg');
+      } else {
+        header.classList.remove('h-16', 'shadow-lg');
+        header.classList.add('h-20');
+      }
+    });
+
+    // Gallery Dynamic Modal Logic
+    const galleryModal = document.getElementById('gallery-modal');
+    const modalTitle = document.getElementById('modal-title');
+    const modalDescription = document.getElementById('modal-description');
+    const modalBanner = document.getElementById('modal-banner');
+    const modalIcon = document.getElementById('modal-icon');
+
+    const modalThemes = {
+      education: { bg: 'bg-gradient-to-tr from-emerald-600 to-teal-800', icon: 'fa-laptop-code' },
+      hackathon: { bg: 'bg-gradient-to-tr from-emerald-750 to-emerald-950', icon: 'fa-users-viewfinder' },
+      career: { bg: 'bg-gradient-to-tr from-teal-600 to-emerald-800', icon: 'fa-briefcase' },
+      interview: { bg: 'bg-gradient-to-tr from-teal-700 to-emerald-900', icon: 'fa-user-tie' },
+      study: { bg: 'bg-gradient-to-tr from-emerald-500 to-teal-700', icon: 'fa-door-open' },
+      graduation: { bg: 'bg-gradient-to-tr from-emerald-600 to-cyan-800', icon: 'fa-graduation-cap' }
+    };
+
+    function openGalleryModal(title, text, themeKey) {
+      modalTitle.innerText = title;
+      modalDescription.innerText = text;
+
+      // Apply dynamic visual theme to modal
+      const theme = modalThemes[themeKey] || modalThemes.education;
+      modalBanner.className = `h-44 flex flex-col items-center justify-center relative text-white ${theme.bg}`;
+      modalIcon.className = `fa-solid ${theme.icon}`;
+
+      // Open Modal with nice transition
+      galleryModal.classList.remove('hidden');
+      setTimeout(() => {
+        galleryModal.classList.remove('opacity-0');
+        galleryModal.querySelector('.transform').classList.remove('scale-95');
+        galleryModal.querySelector('.transform').classList.add('scale-100');
+      }, 20);
+    }
+
+    function closeGalleryModal() {
+      galleryModal.classList.add('opacity-0');
+      galleryModal.querySelector('.transform').classList.remove('scale-100');
+      galleryModal.querySelector('.transform').classList.add('scale-95');
+      setTimeout(() => {
+        galleryModal.classList.add('hidden');
+      }, 300);
+    }
+
+    // Close modal on outside click
+    galleryModal.addEventListener('click', (e) => {
+      if (e.target === galleryModal) {
+        closeGalleryModal();
+      }
+    });
+  </script>
+</body>
+</html>
